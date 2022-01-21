@@ -1,0 +1,9 @@
+# ignore user files
+start.bat
+config.json
+dump.json
+vpsh.db
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
