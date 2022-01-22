@@ -78,7 +78,7 @@ async def callback_set_salers(message: types.Message, state: FSMContext):
 
         msg = f"Соответствие установлено:\n"
         for k, v in config.user_map.items():
-            msg += f"{k} -> {v}"
+            msg += f"{k} -> {v}\n"
         await message.reply(msg)
     except:
         await message.reply("Ошибка! Попробуйте еще раз!")
