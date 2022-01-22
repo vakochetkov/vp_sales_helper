@@ -1,5 +1,6 @@
 # ignore user files
 start.bat
+start.sh
 config.json
 dump.json
 vpsh.db
