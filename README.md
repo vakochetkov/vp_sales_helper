@@ -11,9 +11,9 @@
 
 **Необходимый минимум**: машина с статическим ip или привязанным доменом, чтобы установить webhook, docker для быстрого развертывания бота 
 
-1. Скачиваем образ `docker pull vakochetkov/vp_sales_helper`
+1. Скачать образ с Docker Hub `docker pull vakochetkov/vp_sales_helper` или собрать с Github `docker build -t vakochetkov/vp_sales_helper github.com/vakochetkov/vp_sales_helper`
 
-2. При запуске устанавливаем PIN для команд, токен бота и адрес сервера через переменные среды `docker run -d --restart always --log-opt max-size=10m --log-opt max-file=2 -e VPSH_TOKEN="token" -e VPSH_ADMIN_PIN="pin" -e VPSH_SERVER="0.0.0.0" -p 8080:8080 vakochetkov/vp_sales_helper`
+2. При запуске установить PIN для команд, токен бота и адрес сервера через переменные среды `docker run -d --restart always --log-opt max-size=10m --log-opt max-file=2 -e VPSH_TOKEN="token" -e VPSH_ADMIN_PIN="pin" -e VPSH_SERVER="0.0.0.0" -p 8080:8080 vakochetkov/vp_sales_helper`
 
 ### Commands
 
