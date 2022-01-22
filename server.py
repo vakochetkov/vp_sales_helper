@@ -22,7 +22,7 @@ async def __handler(request):
 
     if "WooCommerce" in str(headers.get("User-Agent")):
         data = await request.json()
-        logger.info(data)
+        logger.debug(data)
         callback = request.config_dict["callback"]
         if callback:
             await callback(data)
