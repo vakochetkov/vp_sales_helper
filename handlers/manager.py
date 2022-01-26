@@ -55,7 +55,8 @@ def determine_salers(order: Order) -> str:
             return str(v)
     return "@everyone"
 
-def build_keyboard(state: str):
+
+def build_keyboard(state: str) -> types.InlineKeyboardMarkup:
     button = types.InlineKeyboardButton(text=state, 
         callback_data=cbFabOrder.new(state=state))
 
@@ -63,25 +64,34 @@ def build_keyboard(state: str):
     keyboard.add(button) 
     return keyboard
 
+
 async def send_order_message(data: dict):
     order = Order(data)
     salers = determine_salers(order)
+    prods = ""
     state = ""
+
+    for prod in order.products:
+        prods += f"📦{prod}\n"
 
     message = f"{salers}\n"
     message += str(
-        f"НОВЫЙ 🆕\n"
-        f"Заказ {order.id}\n"
-        f"Сумма заказа: {order.total}\n"
-        f"Дата заказа: {order.date}\n"
-        f"Покупатель: {order.customer} {order.email} {order.phone}\n"
-        f"Примечания к заказу: {order.note}\n"
-        f"Способ оплаты: {order.payment}\n"
-        f"Способ доставки: {order.shipping_type}\n"
-        f"Доставка: {order.shipping_info}\n"
+        f"🆕НОВЫЙ\n"
+        f"🏷️Заказ {order.id}\n"
+        f"\n"
+        f"🧑Покупатель: {order.customer} {order.email}\n"
+        f"\n"
+        f"☎️ {order.phone} ☎️\n"
+        f"\n"
+        f"✉️Доставка: {order.shipping_type} {order.shipping_info}\n"
+        f"\n"
+        f"{prods}"
+        f"\n"
+        f"💵Сумма заказа: {order.total}\n"
+        f"\n"        
+        f"📌Примечания к заказу: {order.note}\n"
+        f"⌚Дата заказа: {order.date}\n"
     )
-    for prod in order.products:
-        message += f"{prod}\n"
 
     kb = build_keyboard(states[0])
     await send_to_chat(message, kb)
@@ -96,17 +106,17 @@ async def callback_order_notified(call: types.CallbackQuery, callback_data: dict
         state = str(callback_data["state"])
         if state == states[0]:
             msg = call.message.text.splitlines()
-            msg[1] = "В ОБРАБОТКЕ 🔃"
+            msg[1] = "🔃В ОБРАБОТКЕ"
             text = '\n'.join(map(str, msg)) 
             await call.message.edit_text(
                 str(f"\n{text}"), reply_markup=build_keyboard(states[1])
             )
         elif state == states[1]:
             msg = call.message.text.splitlines()
-            started = datetime.strptime(msg[4].split(":", maxsplit=1)[-1].strip(), APP_DATE_FORMAT)
+            started = datetime.strptime(msg[-1].split(":", maxsplit=1)[-1].strip(), APP_DATE_FORMAT)
             ended = datetime.now()
             delta = strfdelta(ended - started, "{H}ч {M}мин {S}сек")
-            msg[1] = f"ЗАВЕРШЕН за {delta} ✅"
+            msg[1] = f"✅ЗАВЕРШЕН за {delta}"
 
             text = '\n'.join(map(str, msg)) 
             await call.message.edit_text(
