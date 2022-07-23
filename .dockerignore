@@ -1,0 +1,14 @@
+# ignore user files
+*.env
+start.bat
+start.sh
+config.json
+dump.json
+vpsh.db
+
+# python venv
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
