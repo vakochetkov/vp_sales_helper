@@ -27,6 +27,8 @@ class Order():
     def __init__(self, data: dict) -> None:
         self.id = int(data.get("id", 0))
         self.total = int(data.get("total", 0))
+        self.shipping_total = int(data.get("shipping_total", 0))
+        self.products_total = self.total - self.shipping_total
         self.date = datetime.strptime(data.get("date_created", ""), WC_DATE_FORMAT).strftime(APP_DATE_FORMAT)
 
         self.customer = str(data.get("billing", {}).get("first_name", "")) + " " + str(data.get("billing", {}).get("last_name", ""))
@@ -43,8 +45,16 @@ class Order():
         self.products = []
         products = data.get("line_items", [])
         for p in products:
-            text = "{} - {} - {}{}".format(
-                p.get("name", ""), p.get("quantity", ""), p.get("total", ""), data.get("currency", "")
+            if "meta_data" in p and len(p["meta_data"]) > 0:
+                metadata = " ("
+                for opt in p["meta_data"]:
+                    metadata += str(opt["display_key"]) + ": " + str(opt["display_value"] + ", ")
+                metadata = metadata[:-2] + ")" # remove last ` ,`
+            else:
+                metadata = ""
+
+            text = "{}{} - {} - {}{}".format(
+                p.get("name", ""), metadata, p.get("quantity", ""), p.get("total", ""), data.get("currency", "")
             )
             self.products.append(text)
 
@@ -84,10 +94,12 @@ async def send_order_message(data: dict):
         f"☎️ {order.phone} ☎️\n"
         f"\n"
         f"✉️Доставка: {order.shipping_type} {order.shipping_info}\n"
+        f"🚚Стоимость доставки: {order.shipping_total}\n"
         f"\n"
         f"{prods}"
         f"\n"
-        f"💵Сумма заказа: {order.total}\n"
+        f"📝Сумма товаров: {order.products_total}\n"
+        f"💵Итог: {order.total}\n"
         f"\n"        
         f"📌Примечания к заказу: {order.note}\n"
         f"⌚Дата заказа: {order.date}\n"
