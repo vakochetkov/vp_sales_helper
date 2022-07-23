@@ -45,8 +45,16 @@ class Order():
         self.products = []
         products = data.get("line_items", [])
         for p in products:
-            text = "{} - {} - {}{}".format(
-                p.get("name", ""), p.get("quantity", ""), p.get("total", ""), data.get("currency", "")
+            if "meta_data" in p and len(p["meta_data"]) > 0:
+                metadata = " ("
+                for opt in p["meta_data"]:
+                    metadata += str(opt["display_key"]) + ": " + str(opt["display_value"] + ", ")
+                metadata = metadata[:-2] + ")" # remove last ` ,`
+            else:
+                metadata = ""
+
+            text = "{}{} - {} - {}{}".format(
+                p.get("name", ""), metadata, p.get("quantity", ""), p.get("total", ""), data.get("currency", "")
             )
             self.products.append(text)
 
